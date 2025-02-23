@@ -19,6 +19,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+        <meta name="theme-color" content="#ffffff"></meta>
+      </head>
       <body className={spaceGrotesk.className}>{children}</body>
     </html>
   );
