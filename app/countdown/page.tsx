@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { ChevronDown } from "lucide-react";
 import GameGrid from "@/components/GameGrid";
+import { ThreeDots } from "react-loader-spinner";
 
 const countdownVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -13,18 +14,18 @@ const countdownVariants = {
     y: 0,
     transition: {
       duration: 0.6,
-      staggerChildren: 0.1
-    }
-  }
+      staggerChildren: 0.1,
+    },
+  },
 };
 
 const timeUnitVariants = {
   hidden: { scale: 0.8, opacity: 0 },
-  visible: { 
-    scale: 1, 
+  visible: {
+    scale: 1,
     opacity: 1,
-    transition: { type: "spring", stiffness: 200, damping: 20 }
-  }
+    transition: { type: "spring", stiffness: 200, damping: 20 },
+  },
 };
 
 export default function CountdownPage() {
@@ -34,14 +35,15 @@ export default function CountdownPage() {
     minutes: 0,
     seconds: 0,
   });
+  const [showLogo, setShowLogo] = useState(true);
 
   useEffect(() => {
     const eventDate = new Date("2025-03-17T00:00:00"); // Example date
-    
+
     const timer = setInterval(() => {
       const now = new Date();
       const difference = eventDate.getTime() - now.getTime();
-      
+
       setTimeLeft({
         days: Math.floor(difference / (1000 * 60 * 60 * 24)),
         hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
@@ -54,36 +56,51 @@ export default function CountdownPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
-      <div className="gradient-line" />
-      <div className="gradient-line" />
-      <div className="gradient-line" />
-      <div className="gradient-line" />
-      <div className="gradient-line" />
-      <div className="glow" />
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white relative overflow-hidden">
+      {/* Full-screen TEDx Logo Overlay with subtle receding animation */}
+      {showLogo && (
+        <motion.div
+          className="fixed inset-0 flex flex-col items-center justify-center bg-black z-50"
+          initial={{ scale: 1, opacity: 1 }}
+          animate={{ scale: 0.95, opacity: 0 }}
+          transition={{ duration: 2, ease: "easeInOut" }}
+          onAnimationComplete={() => setShowLogo(false)}
+        >
+          <motion.img
+            src="https://tedxajce.in/images/logo/logo.png"
+            alt="TEDx Logo"
+            className="w-48 md:w-64 object-contain mb-4"
+          />
+          <ThreeDots color="#ff0000" />
+        </motion.div>
+      )}
 
       <div className="h-screen flex flex-col items-center justify-center relative px-4">
-        <motion.div 
+        <motion.div
           className="text-center space-y-8 md:space-y-12 relative z-10 w-full"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <motion.h1 
-            className="text-4xl sm:text-5xl md:text-7xl font-bold bg-gradient-to-r from-red-500 via-red-400 to-red-300 bg-clip-text text-transparent px-2"
+            <motion.h1
+            className="text-4xl sm:text-6xl md:text-7xl font-bold text-red-500 px-2 tracking-wide uppercase"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            TEDx Event Reveal
-          </motion.h1>
-          <motion.div 
+            style={{ fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }} // TEDx font style
+            >
+            <span className="justify-center flex"><img src="https://tedxajce.in/images/logo/logo.png" alt="TEDx Logo" /></span>
+            <br />
+            Event Reveal
+            </motion.h1>
+
+          <motion.div
             className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 md:gap-6 w-full max-w-xs sm:max-w-2xl md:max-w-3xl mx-auto"
             variants={countdownVariants}
             initial="hidden"
             animate="visible"
           >
-            {Object.entries(timeLeft).map(([unit, value]) => (
+              {Object.entries(timeLeft).map(([unit, value]) => (
               <motion.div key={unit} variants={timeUnitVariants} className="w-full">
                 <Card className="bg-black/40 p-3 sm:p-4 md:p-6 backdrop-blur-sm border border-white/10 relative overflow-hidden group">
                   <motion.div 
@@ -102,19 +119,25 @@ export default function CountdownPage() {
                 </Card>
               </motion.div>
             ))}
+
+
+            <motion.div
+              className="col-span-2 sm:col-span-4 text-center text-white text-lg sm:text-2xl font-semibold"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
+              Something big is coming!!
+              <br />
+               Stay tuned
+            </motion.div>
           </motion.div>
         </motion.div>
-        
-        <motion.div 
+
+        <motion.div
           className="absolute bottom-8 z-10"
-          animate={{ 
-            y: [0, 10, 0],
-          }}
-          transition={{ 
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         >
           <ChevronDown className="w-8 h-8 text-red-400" />
         </motion.div>
@@ -122,17 +145,17 @@ export default function CountdownPage() {
 
       <div className="min-h-screen flex items-center justify-center p-4 relative">
         <div className="w-full max-w-xs sm:max-w-2xl md:max-w-3xl space-y-8 md:space-y-12">
-          <motion.div 
+          <motion.div
             className="text-center space-y-4"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-white">
+            <h2 className="text-3xl sm:text-4xl font-bold text-red-500">
               Unlock the Mystery
             </h2>
-            <p className="text-lg sm:text-xl text-white/60 max-w-xl mx-auto px-4">
+            <p className="text-lg sm:text-xl text-white/70 max-w-xl mx-auto px-4">
               Find the hidden numbers to reveal more about the event.
               Choose wisely, you have 3 attempts per day.
             </p>

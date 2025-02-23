@@ -112,7 +112,7 @@ export default function GameGrid() {
                 {cell.isRevealed ? (
                   <span className="text-green-400">{cell.value}</span>
                 ) : (
-                  "?"
+                  <span className="text-red-800">X</span>
                 )}
               </Button>
             ))

@@ -50,7 +50,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md p-8 space-y-6 bg-white/5 backdrop-blur-lg border-white/10">
         <div className="text-center space-y-2">
           <Lock className="w-12 h-12 mx-auto text-red-500" />
-          <h1 className="text-3xl font-bold text-white">TEDx Event</h1>
+          <h1 className="text-3xl font-bold text-white justify-center flex"><img src="https://tedxajce.in/images/logo/logo.png"/></h1>
           <p className="text-gray-400">Sign in to reveal what's coming</p>
         </div>
         
