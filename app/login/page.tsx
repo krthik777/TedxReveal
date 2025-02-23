@@ -6,16 +6,43 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Lock } from "lucide-react";
+import { ProgressBar } from "react-loader-spinner";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement actual authentication
-    router.push("/countdown");
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
+      }
+
+      localStorage.setItem('userEmail', data.email);
+      localStorage.setItem('authToken', data.token);
+      router.push("/countdown");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Login failed');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -28,6 +55,9 @@ export default function LoginPage() {
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <p className="text-red-500 text-sm text-center">{error}</p>
+          )}
           <div className="space-y-2">
             <Input
               type="email"
@@ -36,6 +66,7 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
               required
+              disabled={isLoading}
             />
           </div>
           <div className="space-y-2">
@@ -46,13 +77,25 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               className="bg-white/10 border-white/20 text-white placeholder:text-gray-400"
               required
+              disabled={isLoading}
             />
           </div>
           <Button 
             type="submit" 
-            className="w-full bg-red-500 hover:bg-red-600 text-white"
+            className="w-full bg-red-500 hover:bg-red-600 text-white flex justify-center items-center gap-2"
+            disabled={isLoading}
           >
-            Sign In
+            {isLoading ? (
+              <ProgressBar
+                height="24"
+                width="80"
+                ariaLabel="progress-bar-loading"
+                borderColor="#ffffff"
+                barColor="#000000" // Tailwind's red-500
+              />
+            ) : (
+              "Sign In"
+            )}
           </Button>
         </form>
       </Card>
