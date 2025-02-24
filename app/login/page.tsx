@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Lock } from "lucide-react";
+import { CircleAlert, Lock } from "lucide-react";
 import { ProgressBar } from "react-loader-spinner";
 
 export default function LoginPage() {
@@ -80,23 +80,28 @@ export default function LoginPage() {
               disabled={isLoading}
             />
           </div>
-          <Button 
+            <Button 
             type="submit" 
             className="w-full bg-red-500 hover:bg-red-600 text-white flex justify-center items-center gap-2"
             disabled={isLoading}
-          >
+            >
             {isLoading ? (
               <ProgressBar
-                height="24"
-                width="80"
-                ariaLabel="progress-bar-loading"
-                borderColor="#ffffff"
-                barColor="#000000" // Tailwind's red-500
+              height="24"
+              width="80"
+              ariaLabel="progress-bar-loading"
+              borderColor="#ffffff"
+              barColor="#000000" // Tailwind's red-500
               />
             ) : (
               "Sign In"
             )}
-          </Button>
+            </Button>
+            <div className="text-gray-400 text-sm text-center mt-4 flex items-center justify-center gap-2">
+            <CircleAlert className="w-8 h-8 text-gray-400" />
+        
+            <span>Remember your email and password used for signing in!</span>
+            </div>
         </form>
       </Card>
     </div>

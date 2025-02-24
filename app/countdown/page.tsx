@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { ChevronDown } from "lucide-react";
 import GameGrid from "@/components/GameGrid";
 import { ThreeDots } from "react-loader-spinner";
-
+import ReactTypingEffect from "react-typing-effect";
 const countdownVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
@@ -71,7 +71,7 @@ export default function CountdownPage() {
             alt="TEDx Logo"
             className="w-48 md:w-64 object-contain mb-4"
           />
-          <ThreeDots color="#ff0000" />
+          <ThreeDots color="#ec0023" />
         </motion.div>
       )}
 
@@ -83,43 +83,42 @@ export default function CountdownPage() {
           transition={{ duration: 0.8 }}
         >
             <motion.h1
-            className="text-4xl sm:text-6xl md:text-7xl font-bold text-red-500 px-2 tracking-wide uppercase"
+            className="text-4xl sm:text-6xl md:text-4xl font-bold text-[#ec0023] px-2 tracking-wide uppercase"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            style={{ fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif" }} // TEDx font style
+            style={{ fontFamily: "'Helvetica Neue', sans-serif" }} // Changed font style to match TEDx theme
             >
             <span className="justify-center flex"><img src="https://tedxajce.in/images/logo/logo.png" alt="TEDx Logo" /></span>
             <br />
             Event Reveal
             </motion.h1>
 
-          <motion.div
+            <motion.div
             className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 md:gap-6 w-full max-w-xs sm:max-w-2xl md:max-w-3xl mx-auto"
             variants={countdownVariants}
             initial="hidden"
             animate="visible"
-          >
+            >
               {Object.entries(timeLeft).map(([unit, value]) => (
               <motion.div key={unit} variants={timeUnitVariants} className="w-full">
-                <Card className="bg-black/40 p-3 sm:p-4 md:p-6 backdrop-blur-sm border border-white/10 relative overflow-hidden group">
-                  <motion.div 
-                    className="relative z-10"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ type: "spring", stiffness: 400 }}
-                  >
-                    <div className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-white">
-                      {value.toString().padStart(2, '0')}
-                    </div>
-                    <div className="text-xs sm:text-sm uppercase tracking-wider text-white/60">
-                      {unit}
-                    </div>
-                  </motion.div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </Card>
+              <Card className="bg-black/40 p-3 sm:p-4 md:p-6 backdrop-blur-sm border border-white/10 relative overflow-hidden group">
+                <motion.div 
+                className="relative z-10"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 400 }}
+                >
+                <div className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-white">
+                  {value.toString().padStart(2, '0')}
+                </div>
+                <div className="text-xs sm:text-sm uppercase tracking-wider text-white/60">
+                  {unit}
+                </div>
+                </motion.div>
+                <div className="absolute inset-0 bg-gradient-to-t from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </Card>
               </motion.div>
             ))}
-
 
             <motion.div
               className="col-span-2 sm:col-span-4 text-center text-white text-lg sm:text-2xl font-semibold"
@@ -127,11 +126,16 @@ export default function CountdownPage() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              Something big is coming!!
-              <br />
-               Stay tuned
+              <ReactTypingEffect
+              text={["Something big is coming!! Stay tuned", "Unlock the mystery to reveal more", "Look for the hidden numbers"]}
+              
+              speed={100}
+              eraseSpeed={50}
+              eraseDelay={2000}
+              typingDelay={500}
+              />
             </motion.div>
-          </motion.div>
+            </motion.div>
         </motion.div>
 
         <motion.div
@@ -152,11 +156,11 @@ export default function CountdownPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-red-500">
+            <h2 className="text-3xl sm:text-4xl font-bold text-[#ec0023]">
               Unlock the Mystery
             </h2>
             <p className="text-lg sm:text-xl text-white/70 max-w-xl mx-auto px-4">
-              Find the hidden numbers to reveal more about the event.
+              Select the hidden numbers below to reveal more about the event.
               Choose wisely, you have 3 attempts per day.
             </p>
           </motion.div>
