@@ -15,11 +15,9 @@ async function connectToDatabase() {
 }
 
 function generateRandomGrid() {
-  const numbers = [...Array(9).keys()].map(n => n + 1);
-  let shuffledNumbers = [...numbers, ...numbers].sort(() => Math.random() - 0.5);
   return Array(4).fill(null).map(() => 
     Array(4).fill(null).map(() => ({
-      value: shuffledNumbers.pop()!,
+      value: Math.floor(Math.random() * 900) + 100,
       isRevealed: false
     }))
   );
@@ -31,63 +29,50 @@ export async function POST(req: NextRequest) {
     if (!authToken) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { email } = jwt.verify(authToken, JWT_SECRET) as { email: string };
-    const { row, col } = await req.json();
+    const { row, col, value } = await req.json(); // Get value from request body
     
     const client = await connectToDatabase();
     const db = client.db();
     const users = db.collection('users');
-    const gameGrids = db.collection('gamegrids');
+    const gameSelections = db.collection('selections');
 
     const user = await users.findOne({ email });
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
-    // Get or create game grid
-    let gridData = await gameGrids.findOne<{ _id: ObjectId; email: string; grid: { value: number; isRevealed: boolean; }[][]; hiddenNumbers: number[]; selections: { row: number; col: number; timestamp: Date; }[]; lastSelection: Date | null; }>({ email });
-
-    if (!gridData) {
-      // Generate new grid with all numbers from 1-9
-      const newGrid = generateRandomGrid();
-      gridData = {
-        _id: new ObjectId(),
-        email,
-        grid: newGrid,
-        hiddenNumbers: [],
-        selections: [],
-        lastSelection: null
-      };
-      await gameGrids.insertOne(gridData);
-    }
-
-    // Filter selections made in the last 24 hours
-    const todaySelections = gridData.selections.filter(selection => 
-      Date.now() - new Date(selection.timestamp).getTime() < 86400000
-    );
-
-    if (todaySelections.length >= 3) {
-      return NextResponse.json({ 
-        error: 'You can only make three selections per day' 
-      }, { status: 429 });
-    }
-
-    // Update grid
-    const updatedGrid = [...gridData.grid];
-    const cell = updatedGrid[row][col];
-    cell.isRevealed = true;
-    
-    await gameGrids.updateOne(
+    // Check last selection
+    const lastSelection = await gameSelections.findOne(
       { email },
-      { 
-        $set: { 
-          grid: updatedGrid
-        },
-        $push: { selections: { row, col, timestamp: new Date() } as any }
-      }
+      { sort: { timestamp: -1 } }
     );
+
+    if (lastSelection) {
+      const lastSelectionTime = new Date(lastSelection.timestamp).getTime();
+      const remainingTime = Date.now() - lastSelectionTime;
+      const hoursPassed = Math.floor(remainingTime / (1000 * 60 * 60));
+
+      if (hoursPassed < 24) {
+        const remainingHours = 24 - hoursPassed;
+        return NextResponse.json({ 
+          error: 'Wait for your next chance',
+          remaining: remainingHours * 60 * 60 * 1000 - remainingTime
+        }, { status: 429 });
+      }
+    }
+
+    // Generate and save new grid
+    const newGrid = generateRandomGrid();
+    const selectedCell = newGrid[row][col];
+    selectedCell.isRevealed = true;
+
+    await gameSelections.insertOne({
+      email,
+      value: value, // Use value from request
+      timestamp: new Date()
+    });
 
     return NextResponse.json({ 
       success: true,
-      value: cell.value,
-      isCorrect: gridData.hiddenNumbers.includes(cell.value)
+      value: value // Return the received value
     });
 
   } catch (error) {
@@ -107,28 +92,28 @@ export async function GET(req: NextRequest) {
     const { email } = jwt.verify(authToken, JWT_SECRET) as { email: string };
     const client = await connectToDatabase();
     const db = client.db();
-    const gameGrids = db.collection('gamegrids');
+    const gameSelections = db.collection('selections');
 
-    let gridData = await gameGrids.findOne<{ _id: ObjectId; email: string; grid: { value: number; isRevealed: boolean; }[][]; hiddenNumbers: number[]; selections: { row: number; col: number; timestamp: Date; }[]; lastSelection: Date | null; }>({ email });
+    // Get all selections for the user
+    const allSelections = await gameSelections.find({ email }).sort({ timestamp: -1 }).toArray();
+
+    let canPlay = true;
+    let remaining = 0;
     
-    if (!gridData) {
-      // Generate new grid if not found
-      const newGrid = generateRandomGrid();
-      gridData = {
-        _id: new ObjectId(),
-        email,
-        grid: newGrid,
-        hiddenNumbers: [],
-        selections: [],
-        lastSelection: null
-      };
-      await gameGrids.insertOne(gridData);
+    if (allSelections.length > 0) {
+      const lastSelection = allSelections[0];
+      const lastSelectionTime = new Date(lastSelection.timestamp).getTime();
+      remaining = Date.now() - lastSelectionTime;
+      const hoursPassed = Math.floor(remaining / (1000 * 60 * 60));
+      canPlay = hoursPassed >= 24;
+      remaining = 24 * 60 * 60 * 1000 - remaining;
     }
 
     return NextResponse.json({
-      grid: gridData.grid,
-      selections: gridData.selections,
-      lastSelection: gridData.lastSelection
+      canPlay,
+      remaining: remaining > 0 ? remaining : 0,
+      grid: canPlay ? generateRandomGrid() : null,
+      selections: allSelections.map(s => s.value) // Return all values
     });
 
   } catch (error) {

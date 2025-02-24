@@ -38,7 +38,7 @@ export default function CountdownPage() {
   const [showLogo, setShowLogo] = useState(true);
 
   useEffect(() => {
-    const eventDate = new Date("2025-03-17T00:00:00"); // Example date
+    const eventDate = new Date("2025-03-12T07:00:00"); // Example date
 
     const timer = setInterval(() => {
       const now = new Date();
@@ -87,11 +87,11 @@ export default function CountdownPage() {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            style={{ fontFamily: "'Helvetica Neue', sans-serif" }} // Changed font style to match TEDx theme
+            style={{ fontFamily: "'Hexlvetica Neue', sans-serif" }} // Changed font style to match TEDx theme
             >
-            <span className="justify-center flex"><img src="https://tedxajce.in/images/logo/logo.png" alt="TEDx Logo" /></span>
+            <span className="justify-center flex"><img src="https://tedxajce.in/images/logo/logo.png" alt="TEDx" /></span>
             <br />
-            Event Reveal
+            Event Countdown
             </motion.h1>
 
             <motion.div
@@ -127,7 +127,7 @@ export default function CountdownPage() {
               transition={{ duration: 0.8, delay: 0.4 }}
             >
               <ReactTypingEffect
-              text={["Something big is coming!! Stay tuned", "Unlock the mystery to reveal more", "Look for the hidden numbers"]}
+              text={["Something big is coming!! Stay tuned", "Unlock the mystery to reveal more🪄", "Look for your lucky numbers🍀"]}
               
               speed={100}
               eraseSpeed={50}
@@ -161,7 +161,7 @@ export default function CountdownPage() {
             </h2>
             <p className="text-lg sm:text-xl text-white/70 max-w-xl mx-auto px-4">
               Select the hidden numbers below to reveal more about the event.
-              Choose wisely, you have 3 attempts per day.
+              Choose wisely, you only have one attempt per day.
             </p>
           </motion.div>
           <GameGrid />

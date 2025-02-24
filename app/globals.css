@@ -135,3 +135,17 @@
     opacity: 0.8;
   }
 }
+
+/* Global styles (tailwind or traditional CSS) */
+.swal-dark {
+  background-color: #1e1e1e;
+}
+
+.swal-popup-dark {
+  color: #fff;
+  border-radius: 10px;
+}
+
+.swal-title-dark {
+  color: #fff;
+}
