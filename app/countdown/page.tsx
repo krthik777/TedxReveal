@@ -160,8 +160,8 @@ export default function CountdownPage() {
               Unlock the Mystery
             </h2>
             <p className="text-lg sm:text-xl text-white/70 max-w-xl mx-auto px-4">
-              Select the hidden numbers below to reveal more about the event.
-              Choose wisely, you only have one attempt per day.
+              Three Days of thrill.One Goal. See you here after the next 24 hrs. 
+              Remember your Choice is the key
             </p>
           </motion.div>
           <GameGrid />
