@@ -160,8 +160,8 @@ export default function CountdownPage() {
               Unlock the Mystery
             </h2>
             <p className="text-lg sm:text-xl text-white/70 max-w-xl mx-auto px-4">
-              Three Days of thrill.One Goal. See you here after the next 24 hrs. 
-              Remember your Choice is the key
+              Three Days of thrill. One Goal.  See you here after the next 24 hrs. 
+              Remember your Choice is the key!!
             </p>
           </motion.div>
           <GameGrid />
